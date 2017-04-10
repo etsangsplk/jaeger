@@ -76,11 +76,19 @@ install-glide:
 install: install-glide
 	glide install
 
-install_examples: install-glide
+install_examples: install
 	(cd examples/hotrod/; glide install)
 
 build_examples:
 	go build -o ./examples/hotrod/hotrod-demo ./examples/hotrod/main.go
+
+build_ui:
+	cd jaeger-ui && npm install && npm run build
+	rm -rf jaeger-ui-build && mkdir jaeger-ui-build
+	cp -r jaeger-ui/build jaeger-ui-build/
+
+build-all-in-one-linux: build_ui
+	CGO_ENABLED=0 GOOS=linux installsuffix=cgo go build -o ./cmd/standalone/standalone-linux ./cmd/standalone/main.go
 
 .PHONY: cover
 cover:
